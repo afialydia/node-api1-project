@@ -89,11 +89,16 @@ server.delete("/api/users/:id", (req, res) => {
 });
 
 server.put("/api/users/:id", (req, res) => {
-const {name, bio } = req.body
-	db.update(id)
+const id = req.params.id
+const body = req.body
+
+if(!(body.name && body.bio)){
+	res.status(500).json({errorMessage: 'Please provide name and bio for the user'})
+}else{
+	db.update(id,body)
 		.then(user => {
-			if(user){res.status(200).json({message: 'user found', user});
-		}else{        res.status(404).json({ message: "user not found" });
+			if(user){res.status(200).json({message: 'user updated', user});
+		}else{        res.status(404).json({ message: "The user with the specified ID does not exist."});
     }})
 		.catch(error => {
 			console.log("error on GET /api/users", error);
@@ -101,7 +106,8 @@ const {name, bio } = req.body
 				.status(500)
 				.json({ errorMessage: "The user information could not be retrieved." });
 		});
-});
+}})
+
 
 // update a hub, passsing the id and the changes
 
